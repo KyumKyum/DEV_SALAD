@@ -11,6 +11,7 @@
 
 ## Languages
 ### Typescript
+- Settings
 
 ### Kotlin
 
