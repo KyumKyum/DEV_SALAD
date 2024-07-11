@@ -5,4 +5,4 @@
 
 ## Contents
 
-- [TS가 처음이라고?! (Introduction)](https://github.com/KyumKyum/DEV_SALAD/blob/main/typescript/intro/Interactive_Rebase.md)
+- [TS가 처음이라고?! (Introduction)](https://github.com/KyumKyum/DEV_SALAD/blob/main/typescript/intro)
