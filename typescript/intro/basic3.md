@@ -1,20 +1,20 @@
-# 난 대학시절 타입들을 전공했단 사아실 - 타입스크립트 기본 문법 2 (Typescript Basics 2)
+# 내가 원하는대로 데이터 흐름을 관리할 수 있다니 이거 완전 럭키비키자나 ✨✨ - 타입스크립트 기본 문법 3 (Typescript Basics 3)
 
-- 보통 [전 단계](https://github.com/KyumKyum/DEV_SALAD/blob/main/typescript/intro/basic1.md)이후, 일반적인 순서는 조건문과 반복문이다.
-- 하지만 Typescript에서 타입 시스템을 조금 더 다뤄보고자 한다. 이 과정이 이후 타입스크립트 개발에 있어서 필수적이라는 것을 알게 될 것이다. :)
+- 마지막으로 필수적이지만 못 다 한 내용을 다뤄보도록 하자. 이번에 다룰 내용은 조건문과 배열, 그리고 반복문이다.
 
 ---
 
 ### 0. 배울 것 (Contents)
 
-- 상수 (Constants)
-- 타입과 인터페이스 (Type & Interface)
+- 조건문 (Conditions)
+- 배열 (Arrays)
+- 반복문 (Loops)
 
 > Basics에 있는 개념들은 앞으로 정말 많이 사용될 개념이니 꼭꼭 익히도록 하자!
 
 ---
 
-### 1. 상수 (Constants)
+### 1. 조건문 (Conditions)
 
 > ✏️ 한번 다음 코드의 결과를 예상해보자.
 
