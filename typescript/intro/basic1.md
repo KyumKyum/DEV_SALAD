@@ -5,7 +5,8 @@
 ### 0. 배울 것 (Contents)
 - 변수 (Variables)
 - 객체 (Constants)
-- 함수 (Function)
+- 배열 (Arrays)
+- 함수 (Functions)
 
 > Basics에 있는 개념들은 앞으로 정말 많이 사용될 개념이니 꼭꼭 익히도록 하자!
 ---
@@ -93,7 +94,70 @@ console.log(myself.name.firstName); // Jay
 > ❓️ 객체는 변수처럼 타입 지정을 못하나요?
 - 당연히 가능하고, 객체의 타입 지정 방식이 위에서 설명한 타입 지정보다 지향되는 방법이다. 하지만, 해당 방법을 공부하기 위해서는 '타입과 인터페이스 (Type and Interface)'에 대해서 알아야하니, 이는 다음 기본 단계에서 설명하는 것으로 한다.
 ---
-### 3. 함수 (Functions)
+### 3. 배열 (Arrays)
+- 우리는 객체라는 개념을 통해서 데이터를 풍부하게 정의하는 방법을 배웠다.
+- 배열은, **여러 개의** 데이터를 정의하는 방법을 이야기한다.
+
+> 💡 학생 5명, 덤벨 12개, 커피 36잔 등등, 여러개의 나열되어 있는 데이터는 배열로 정의한다!
+
+- 배열은 예시를 보면 곧바로 이해가 가능하다. 학생들의 이름이 나열되어있는 배열을 생각해보자.
+```typescript
+const nameList: string[] = ['Jay', 'Eve', 'Sarah', 'Ethan']
+console.log(nameList[0]) // Jay
+console.log(nameList[2]) // Sarah
+```
+> ✏️ 깜짝 상식! 프로그래밍 언어에서 숫자는 0부터 시작한다! 0,1,2,3.... 이 개념이 익숙해지자!
+
+- 배열에는 당연히 객체도 들어올 수 있다. 이번에는, 학생들의 이름 리스트가 아니라, 학생 정보 리스트이다.
+```typescript
+const studentList = [
+    {
+        name: 'Jay',
+        age: 24,
+        major: "IS & CS"
+    },
+    {
+        name: 'Eve',
+        age: 21,
+        major: "Literature"
+    },
+    {
+        name: 'Sarah',
+        age: 23,
+        major: "Mechanical Engineering"
+    },
+    {
+        name: 'Ethan',
+        age: 22,
+        major: "Law"
+    }
+]
+```
+
+- 심지어, 배열은 꼭 같은 데이터만 들어오라는 법도 없다!
+```typescript
+const studentList = [
+    {
+        name: 'Jay',
+        age: 24,
+        major: "IS & CS"
+    },
+    {
+        name: 'Eve',
+    },
+    0,
+    {
+        name: {
+            firstName: 'Joshua',
+            lastName: 'Park'
+        },
+        age: 24,
+    }
+]
+```
+- 이런 말도 안되는 배열도 충분히 가능한 타입스트립트이다. 이런 엉망진창인 배열에 대해서도 우리는 타입을 지정할 수 있는가? 당연히 가능하다! 하지만 이 부분 부터는 타입과 인터페이스에 대한 내용을 어느정도 알아야 하기도 하고, 충분히 어려운 내용이어서 심화 단계에서 설명하려고 한다.
+---
+### 4. 함수 (Functions)
 > ✏️ 잠깐 눈을 감아보고, '함수'의 개념에 대해서 한번 생각해보자. 함수란 무엇인가?
 - 난 함수를 다음과 같이 정의한다: **주어진 입력값에 해당하는 결과값을 만들어내는 로직.**
     - **쉬운 설명:** 
