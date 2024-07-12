@@ -10,8 +10,8 @@
 
 - [자...이것이 클릭이야 - 기본 세팅 (Initialization)]()
 - [Hello World! - 타입스크립트 설치 및 실행 (Typescript Installation) ]()
-- [어머! 우리 아이가 걸음마를 땠어요! - 타입스크립트 기본 문법 1 (Typescript Basics 1)](https://github.com/KyumKyum/DEV_SALAD/blob/main/typescript/intro/basic1.md)
-- [난 대학시절 타입들을 전공했단 사아실 - 타입스크립트 기본 문법 2 (Typescript Basics 2)](https://github.com/KyumKyum/DEV_SALAD/blob/main/typescript/intro/basic2.md)
+- [어머! 우리 아이가 걸음마를 땠어요! 🎉🎉 - 타입스크립트 기본 문법 1 (Typescript Basics 1)](https://github.com/KyumKyum/DEV_SALAD/blob/main/typescript/intro/basic1.md)
+- [난 대학시절 타입들을 전공했단 사아실 😎😎 - 타입스크립트 기본 문법 2 (Typescript Basics 2)](https://github.com/KyumKyum/DEV_SALAD/blob/main/typescript/intro/basic2.md)
 - [내가 원하는대로 데이터 흐름을 관리할 수 있다니 이거 완전 럭키비키자나 ✨✨ - 타입스크립트 기본 문법 3 (Typescript Basics 3)](https://github.com/KyumKyum/DEV_SALAD/blob/main/typescript/intro/basic3.md)
 
 ---

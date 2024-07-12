@@ -1,4 +1,4 @@
-# 난 대학시절 타입들을 전공했단 사아실 - 타입스크립트 기본 문법 2 (Typescript Basics 2)
+# 난 대학시절 타입들을 전공했단 사아실 😎😎 - 타입스크립트 기본 문법 2 (Typescript Basics 2)
 
 - 보통 [전 단계](https://github.com/KyumKyum/DEV_SALAD/blob/main/typescript/intro/basic1.md)이후, 일반적인 순서는 조건문과 반복문이다.
 - 하지만 Typescript에서 타입 시스템을 조금 더 다뤄보고자 한다. 이 과정이 이후 타입스크립트 개발에 있어서 필수적이라는 것을 알게 될 것이다. :)
@@ -58,6 +58,8 @@ name = "Kyumerican0"; // X, Error: 여기서 에러가 난다.
 
 > ❗️ 해당 내용은 타입스크립트의 가장 기본이 되는 내용이며, 가장 심연에서도 나오는 주제이다! 그만큼 근간을 이루는 개념이니 확실히 이해하도록 하자.
 
+#### 2-1 타입 (Types)
+
 - 타입에 대해서 잠깐 다시 생각해보자.
 
 ```typescript
@@ -82,4 +84,108 @@ const example: number = 1;
     - **전부 다**. 타입을 무시하고, 어떤 데이터든 받는다. 일종의 필살기이자, 최대한 쓰면 안되는 타입이다. 일종의 타입스크립트의 금기랄까...ㅎ (자세한 이유는 심화 과정에서 설명을 하겠다.)
     - 역시 '전부 다'를 뜻하는 타입으로 (약간 느낌은 다르지만) `unknown`, `never`역시 존재하는데, 이 역시 심화 과정에서 설명할테니 일단은 잠시 잊어두자.
 
-  //TODO
+- 자, 이제 우리는 '기본적인' 타입에 대해서는 안다! 그렇다면, '기본적이지 않은 타입'은 무엇일까?
+- 이전에 나왔었던 객체 정보인 '학생'을 가져와보자.
+
+```typescript
+const myself = {
+    name: 'Jay Lim',
+    age: 24,
+    major: "IS & CS"
+}
+```
+- 사실, 우리가 응용한 타입 시스템을 잘 생각하면, 해당 타입을 정의하는 것은 쉬운 일이다.
+```typescript
+const myself:{
+  name: string,
+  age: number,
+  major: string,
+} = {
+    name: 'Jay Lim',
+    age: 24,
+    major: "IS & CS"
+}
+```
+- 똑같은 객체를 만들어, 각 객체에 대해서 타입을 정의하는 것이다. 완벽히 잘 동작하는 코드이지만, 다음과 같은 문제가 있다.
+1. **못생겼다**: 아니, 장난이 아니라 예쁜 코드는 개발에서 정말 중요한 문제이다. 실무적인 말로는, 가독성(Readability)가 떨어지게 되어, 이 코드가 도대체 뭐하는 코드인지 알아보기 힘들게 된다.
+2. **긴 코드는 손가락이 아프다**: 이것도 장난이 아니라, 짧은 코드 역시 개발에서 중요한 문제이다. 실무적인 말로는, 개발 공수 (Operational Cost)가 많이 들게 된다.
+
+- 그래서, 우리는 이 객체에 대한 정보를 직접 타입으로 만들어서 해결할 것이다.
+
+```typescript
+type Student = {
+  name: string,
+  age: number,
+  major: string
+}
+
+const myself: Student = {
+    name: 'Jay Lim',
+    age: 24,
+    major: "IS & CS"
+}
+```
+- 이제, 우리는 이 타입이 '학생'관련된 타입이라는 것을 너무나도 잘 안다. 이렇게, 우리가 직접 타입을 만들 수 있다는 점을 이용하여 정말 다양한 개발이 가능해진다.
+```typescript
+// 이전에 나왔던 학생 데이터에 대한 배열도 타입 정의가 가능해진다.
+const studentList: Student[] = [
+    {
+        name: 'Jay',
+        age: 24,
+        major: "IS & CS"
+    },
+    {
+        name: 'Eve',
+        age: 21,
+        major: "Literature"
+    },
+    {
+        name: 'Sarah',
+        age: 23,
+        major: "Mechanical Engineering"
+    },
+    {
+        name: 'Ethan',
+        age: 22,
+        major: "Law"
+    }
+]
+```
+
+```typescript
+// 다음과 같이, 타입 안에 타입을 정의할 수도 있다.
+type Name = {
+  firstName: string,
+  lastName: string
+}
+
+type Student = {
+  name: Name,
+  age: number,
+  major: string
+}
+
+const myself: Student = {
+    name: {
+        firstName: 'Jay',
+        lastName: 'Lim'
+    },
+    age: 24,
+    major: "IS &   CS"
+}
+```
+- 타입은 타입스크립트의 근간을 이루는 시스템이기 때문에 어려워질려면 얼마든지 어려워질 수 있다. `Type Union`, `Type Intersection`과 같이, 많이 사용되는 어려운 개념들은 심화에서 다룰것이다.
+
+#### 2. 인터페이스 (Interfaces)
+- 앞으로에 있어서, 다음과 같은 형태를 더욱 많이 보게 될 것이다.
+```typescript
+interface Student {
+    name: string;
+    age: number;
+    major: string;
+}
+```
+- 해당 `Student` 인터페이스는, `Student` 타입과 하는 역할이 별반 차이가 없다! 사실, **똑같다고 생각해도 된다.**
+- 일단 지금의 레벨에서는, 본인이 원하는 것을 사용하면 될 것 같다. :)
+
+> 💡 분명히 차이는 존재한다. 하지만 그 차이는 심화를 넘어 심연의 내용이니, 나중에 설명하도록 하겠다!
