@@ -6,12 +6,12 @@
 #### 3. 설정 파일 (nginx.conf)
 #### 4. Nginx를 활용한 로드 밸런싱 예시 (Reverse Proxy for Load Balancing)
 
-## 개요
+## 1. 개요
 - Nginx는 Apache와 같은 웹서버이며, 클라이언트와 통신하여 **정적 파일**을 제공하는 소프트웨어이다. (동적 파일은 WAS)
 - 정적 파일을 제공하는 경량화된 웹서버로서도 기능을 하지만, 요청을 받아 뒷단의 WAS(들)로 전달하는 **리버스 프록시 서버 (Reverse Proxy Server)**, 혹은 **로드 벨런서 (Load Balancer)** 로도 동작을 한다.
     - 프록시 서버라는 점에서 **캐싱** 및 **암호화 (e.g. certbot을 활용한 https)** 도 가능하다!
 
-## vs Apache?
+## 2. vs Apache?
 - 위에서 이야기를 했듯이, Nginx는 '경량화'된 웹서버이며, 요청을 처리하는 방법에서 차이점이 존재한다.
     - **Apache**
         - Apache는 요청마다 새로운 스레드를 만들어 요청을 처리한다. \
@@ -26,7 +26,7 @@
 
 ---
 
-## 설정 파일 (nginx.conf)
+## 3. 설정 파일 (nginx.conf)
 - 기본 위치: `/etc/nginx/nginx.conf`
 
 ### 1. Core
