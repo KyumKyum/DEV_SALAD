@@ -19,6 +19,8 @@
 
 ## Architecture
 
-## Framework & Technology
+## Framework
+
+## [Technology](https://github.com/KyumKyum/DEV_SALAD/tree/main/tech)
 
 ## [Retrospect (개발 회고록)](https://github.com/KyumKyum/DEV_SALAD/tree/main/retrospect)
