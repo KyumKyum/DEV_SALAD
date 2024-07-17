@@ -241,3 +241,8 @@ http {
     include /etc/nginx/conf.d/*.conf;
 }
 ```
+
+###### References
+- [NGINX Load Balancing 사용 사례](https://nginxstore.com/blog/nginx/nginx-load-balancing-%EC%82%AC%EC%9A%A9-%EC%82%AC%EB%A1%80/)
+- [[🚗 자동화 개발 회고] EC2, PM2, Nginx 를 이용한 Blue/Green 무중단 배포 구축기](https://velog.io/@chltjdrhd777/%EC%9E%90%EB%8F%99%ED%99%94-%EA%B0%9C%EB%B0%9C-%ED%9A%8C%EA%B3%A0-EC2-PM2-Nginx-%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EB%AC%B4%EC%A4%91%EB%8B%A8-%EB%B0%B0%ED%8F%AC-%EA%B5%AC%EC%B6%95%EA%B8%B0)
+- [Nginx Docs - HTTP Load Balancing](https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/)
