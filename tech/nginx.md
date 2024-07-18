@@ -164,7 +164,7 @@ server {
     }
 ```
 
-#### Server Block (Upstream - Load Balancing)
+### 5. Upstream Block (Load Balancing)
 ```nginx
     upstream server {
         # upstream: 요청을 어떤 서버로 흘려보낼지 정의
