@@ -5,6 +5,8 @@
 - 메세지 큐와 이벤트 스트리밍 구조를 활용한 대용량 트래픽 처리 서비스 개발 경험
 #### 직면했던 문제 상황: Race Condition
 - 이벤트 스트리밍 구조에서 발생하는 분산 클러스터 환경 속 여러 subscriber로 인한 Consumer Race Conditon
+#### 해결 방법: 
+- 각 인스턴스마다 독자적인 키를 주어, publisher-subscriber간 독립적인 채널을 강제함.
 ---
 ### 배경
 - **분산 클러스터 환경을 생각하지 못했다.**
@@ -17,15 +19,10 @@
         - 여러개의 응답 중에서, Stash & Flush를 사용하는 요청의 경우, 나누어진 '이벤트'들의 순서가 엉망이 되는 경우를 발견했다.
 
 ### 문제 분석
-1. 중복 응답: **Race Condition**
+- **Race Condition**
     - 로그를 찍어보니 분명 하나의 메세지만 publish가 되었는데, 인스턴스의 수 만큼 consume이 되어 로그에 찍히는 것이다. Consumer간 Race Condition이 일어나는 것 같다는 생각이 들었다.
         - 나중에 서술하겠지만, publisher에서도 Race Condition이 일어나고 있다. Consumer 문제를 어느정도 해결을 하니 일부 인스턴스의 publisher가 (가장 최근에 메세지를 publish했던 publisher) 동시에 메세지를 publish하는 것을 발견했다.
     - 서버는 여러대가 되었지만, 캐시는 1개이다. 데이터의 연속성을 지키기 위해서 각 서버가 해당 cache에 접근하는 순서와 조건이 제한이 되어야하지만, 그런 것이 전혀 없었다.
-        
-2. 망가진 연속성: **Improper Shared Cache**
-    - Stash & Flush가 일어나는 캐시의 경우, 스케일 아웃이 어렵다는 문제도 존재한다. 데이터베이스 샤딩과 비슷한 문제이고, 이를 위해 샤딩 프로세스를 구현하기 위해 Hash Ring을 구현하는 것은 오버 엔지니어링일 것이다. 
-        - 결국 해당 캐시는 공유가 되는 하나의 캐시여야할텐데, 과연 최대 100만건의 요청을 해당 캐시가 버틸 수 있을지는 의문이다.
-    - 하나의 공유된 캐시를 달아도 문제가 될 수도 있는 것이, 여러개의 consumer는 이 역시 먼저 가져와서 각각의 메세지를 만들려고 할 것이다. 즉, 이 문제도 Race Condition과 관련이 되어있다.
 ---
 ### 아이디어들
 1. Multiple Message Queue (Scale-Out)
@@ -42,7 +39,7 @@
         - 물론 `MULTI`/`EXEC`을 활용해서 command의 조합을 atomic하게 만들 수 있지만, 위와 같은 상황이라면 `EXEC`실행 후에 Semaphore 커맨드가 작동하는 동안 Blocking이 발생해서 성능이 저하될 수 있다고 판단했다.
         - 물론 Semaphore의 특성상 피할수가 없는 부분이지만, 더 나은 방법이 있을지 생각해보기로 했다.
 ---
-### 해결:  Instance Key based channel
+### 해결: Instance Key based channel
 - 각 인스턴스의 채널 명을 동일한 이름이 아닌, unique한 이름으로 만들어 pub-sub 한 쌍이 독립적인 채널을 갖도록 설계하였다.
 - 기존에는 채널 이름을 `enum`으로 정의해서 사용했기에, 여러개의 인스턴스가 형성되었을 시 여러 대의 subscriber가 같은 채널로 구독을 하는 상황이 만들어져 Race Condition이 만들어지게 되었다.
 - `instanceKey`를 정의하여 (uuid 기반의 키) 각 인스턴스마다 배정을 하고, 채널명 + `instanceKey`가 채널명이 되게 해서 각 인스턴스의 채널이 독립되게 만들었다.

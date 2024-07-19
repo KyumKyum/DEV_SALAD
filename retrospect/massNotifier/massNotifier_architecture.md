@@ -27,7 +27,8 @@
 ### 기술 선택
 - 회사의 프레임워크에 맞춰 백엔드 설계는 `expressJS`로 했다. NestJS만 사용하다가 오랜만에 `expressJS`를 사용하여서, 보일러플레이팅부터 시간이 조금 오래 걸렸다.
 - 메세지큐는 일단 `Redis` Pub/Sub으로 구현을 하고, 이후 `Apache Kafka`로 기술 이전 시 문제가 없도록 모듈화하여 의존도를 낮춘다.
-- 캐싱, Rate Limit 관리용 db역시 `Redis`를 사용한다.
+- Rate Limit 관리용 db역시 `Redis`를 사용한다.
+- ~~Event Store역시 `Redis`를 사용한다.~~ Event Store이자 분산형 캐시는 IMDG인 `Hazelcast`로 변경했다. 이유는 [여기에.](https://github.com/KyumKyum/DEV_SALAD/blob/main/retrospect/massNotifier/massNotifier_consistency.md)
 - `ajv`로 요청에 대한 validation을 진행한다.
 - Linter/Formatter로는 최근에 알고 사용하기 시작한 `Biome`을 사용하였다. lint, format이 모두 되기도 하고, 기존에 eslint와 prettier간 충돌을 해결하는 것이 너무나도 피곤한 일이었기에, `Biome`의 존재는 나에게 있어서 좋은 옵션이었다. ~~제발 제 2의 Rome이 되지 않기를~~
 - Dev 환경은 `nodemon`으로, Production 환경은 `pm2`로 서버를 돌리고 `docker`로 containerize한다.
