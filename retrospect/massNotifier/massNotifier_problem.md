@@ -4,8 +4,7 @@
 #### 개발한 것: 대형 알림 처리 마이크로 서비스 (TPS 10K ~ 1M)
 - 메세지 큐와 이벤트 스트리밍 구조를 활용한 대용량 트래픽 처리 서비스 개발 경험
 #### 직면했던 문제 상황: Race Condition
-- 분산 클러스터 환경 속 이벤트 스트리밍 구조에서 발생하는 Consumer Race Conditon
-- 하나의 Shared Cache와, 여러개의 Worker로 인해 발생하는 Publisher/Consumer Race Condition
+- 이벤트 스트리밍 구조에서 발생하는 분산 클러스터 환경 속 여러 subscriber로 인한 Consumer Race Conditon
 ---
 ### 배경
 - **분산 클러스터 환경을 생각하지 못했다.**
@@ -28,14 +27,26 @@
         - 결국 해당 캐시는 공유가 되는 하나의 캐시여야할텐데, 과연 최대 100만건의 요청을 해당 캐시가 버틸 수 있을지는 의문이다.
     - 하나의 공유된 캐시를 달아도 문제가 될 수도 있는 것이, 여러개의 consumer는 이 역시 먼저 가져와서 각각의 메세지를 만들려고 할 것이다. 즉, 이 문제도 Race Condition과 관련이 되어있다.
 ---
-### 해결: 중복 응답
-#### 1. Instance Key based channel.
+### 아이디어들
+1. Multiple Message Queue (Scale-Out)
+    - 독립적인 Queue에 각각 pub-sub을 하나씩 배정을 시키고, 인스턴스의 수가 늘어날 수록, 해당 Queue 역시 개수 자체가 늘어나는 방식이다. 
+    - 아니면, 미리 여러개의 Queue Pool을 만들어두고, 새로운 인스턴스가 생겨날때마다 Pool에서 Queue를 가져오는 방법도 있다.
+    - 하지만 다음과도 같은 문제가 있어 해당 방법은 포기했다.
+        - Queue 자체를 Scale-out: Production 환경은 k8s인데, k8s의 autoscaling된 인스턴스는 같은 포트를 가지고 있고, 내부적으로나 Ingress로 로드 벨런싱이 진행된다. 이 상황은 문제가 일어난 pm2와 같은 상황이다.
+        - Queue Pool: 이 방법은 Pool의 수 이상으로 scale-out이 어렵기 때문에 제외했다.
+    - 그리고 pm2 내부적으로 포트를 다르게 주어 클러스터링을 진행해도 똑같은 문제가 발생하여, Scale-out이 문제가 아닐 것이라고 생각이 되었다.
+
+2. Semaphores
+    - 하나의 subscriber가 데이터를 가져갈 때, message queue에 lock을 걸어 다른 큐가 데이터를 가져가지 못하게 만드는 것이다.
+    - Redis를 하나 더 띄워 이를 구현하려 했으나, 지금 각 subscriber가 데이터를 중복해서 읽어오는 시간 간격이 0.001~0.005이고, `INCR`/`DECR` 뿐만 아니라 누가 lock했는지에 대한 정보와 관련해서 `SET`/`GET`을 해햐는데, @slow ACL 카테고리로 분류가 되어있는 `SET`을 포함해서 저러한 command의 조합과 데이터를 읽어오는 subscriber간 race가 추가적으로 발생할 수도 있다고 판단이 되었다. 
+        - 물론 `MULTI`/`EXEC`을 활용해서 command의 조합을 atomic하게 만들 수 있지만, 위와 같은 상황이라면 `EXEC`실행 후에 Semaphore 커맨드가 작동하는 동안 Blocking이 발생해서 성능이 저하될 수 있다고 판단했다.
+        - 물론 Semaphore의 특성상 피할수가 없는 부분이지만, 더 나은 방법이 있을지 생각해보기로 했다.
+---
+### 해결:  Instance Key based channel
+- 각 인스턴스의 채널 명을 동일한 이름이 아닌, unique한 이름으로 만들어 pub-sub 한 쌍이 독립적인 채널을 갖도록 설계하였다.
 - 기존에는 채널 이름을 `enum`으로 정의해서 사용했기에, 여러개의 인스턴스가 형성되었을 시 여러 대의 subscriber가 같은 채널로 구독을 하는 상황이 만들어져 Race Condition이 만들어지게 되었다.
 - `instanceKey`를 정의하여 (uuid 기반의 키) 각 인스턴스마다 배정을 하고, 채널명 + `instanceKey`가 채널명이 되게 해서 각 인스턴스의 채널이 독립되게 만들었다.
     - e.g. 인스턴스 1의 `instanceKey`가 abc라고 하고, 인스턴스 2의 `instanceKey`가 def라고 가정할 시, `QUEUE_MEDIUM`이라는 채널의 이름은 인스턴스 1에게는 `QUEUE_MEDIUM:adc`, 인스턴스 2에게는 `QUEUE_MEDIUM:def`가 되게 된다.
 - 각 채널이 분리되고, 이제는 Consumer는 각각이 독립된 채널을 구독하게 되면서 Race가 발생하지 않게 되었다. Clustered Payload인 경우에도 Load Balance는 request의 단위로 인스턴스를 결정하니, 전달되는 이벤트들의 연속성에도 문제가 없게 되었다.
 - Jmeter로 1000스레드로 50건 요청을 날렸을 시, 50000건 정확하게 도착하는 것을 확인했다. 이 정도면, MVP레벨에서는 해결이군!
 
-----
-### 해결: 망가진 연속성
-#### . Bulk Consume 방법으로 결정.(설명 추가)
